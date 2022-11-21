@@ -1,0 +1,225 @@
+#함수
+function multiplyString({_s}: text, {_a}: integer) :: text:
+	set {_result} to ""
+	loop {_a} times:
+		set {_result} to "%{result}%%{_s}%"
+	return {_result}
+#강화
+#주문의 흔적
+command /주문의흔적:
+	trigger:
+222264		give 1 paper named "&9주문의 흔적" with lore "F키를 누르면 사용" to player
+command /환생의 불꽃:
+	trigger:
+		give 1 paper named "&0환생의 불꽃" with lore "F키를 누르면 사용" to player
+on swap hand items:
+	if name of player's tool is "&9주문의 흔적":
+		cancel event
+		remove 1 of player's tool from player's tool
+		set {주문의흔적사용.%player%} to false
+		open chest with 1 rows named "&9주문의 흔적" to player
+
+			
+		loop 3 times:
+			set {_slot} to loop-num
+			set slot {_slot} of current inventory of player to paper named "&9주문의 흔적"
+		loop 4 times:
+			set {_slot} to loop-num + 4
+			set slot {_slot} of current inventory of player to paper named "&9주문의 흔적"
+		set {_slot} to 0
+		set slot {_slot} of current inventory of player to Nether Star named "&e스타포스 강화"
+on swap hand items:
+	if name of player's tool is "&0환생의 불꽃":
+		cancel event
+		set {환생의 불꽃사용.%player%} to false
+		open chest with 1 rows named "&0환생의 불꽃" to player
+		loop 4 times:
+			set {_slot} to loop-num - 1
+			set slot {_slot} of current inventory of player to paper named "&0환생의 불꽃"
+		loop 4 times:
+			set {_slot} to loop-num + 4
+			set slot {_slot} of current inventory of player to paper named "&0환생의 불꽃"
+command /메소도박 [<integer>]:
+	trigger:
+		if arg-1 is not set:
+			message "&6/메소도박 <수치>"
+		else if arg-1 is not int:
+			message "&6/메소도박 <숫자>"
+		else if arg-1 > {메소.%player%}:
+			message "&6메소가 부족합니다!"
+		else:
+			subtract arg-1 from	{메소.%player%}
+			set {_확률} to random integer between 1 and 1000000000000
+			if {_확률} is 12345:
+				add arg-1*100 to {메소.%player%}
+				send action bar "&6 100배 당첨 메생역전!!!"
+			else if {_확률} is between 1 and 12344:
+				add arg-1*1.1 to {메소/%player%}
+				send action bar "&6 1.1배 당첨!"
+	trigger
+command /스타포스강화 [<integer>]:
+	trigger:
+		if player is op:
+			if arg-1 is not set:
+				message "&6/스타포스강화 <수치>"
+			else:
+				if player's tool is air:
+					message "&c손에 장비를 들어주세요."
+				else:
+					add multiplyString("★", arg-1) to lore of player's tool 
+on inventory click:
+	if name of current inventory of player is "&9주문의 흔적":
+		cancel event
+		if clicked raw is 0:
+			set {주문의흔적사용.%player%} to true
+			open chest with 5 rows named "&e스타포스" to player
+			loop 4 times:
+				set {_slot} to loop-num - 1
+				set slot {_slot} of current inventory of player to Nether Star named "&e스타포스"
+			loop 4 times:
+				set {_slot} to loop-num + 4
+				set slot {_slot} of current inventory of player to Nether Star named "&e스타포스"
+			loop 36 times:
+				set {_slot} to loop-num +8
+				set slot {_slot} of current inventory of player to yellow stained glass pane named "&e스타포스"
+on inventory click:
+	if name of current inventory of player is "&e스타포스":
+		cancel event
+		if click type is left mouse button:
+			if clicked raw slot is between 41 and 77:
+				if clicked item is bow or netherite sword or netherite boots or netherite leggings or netherite chestplate or netherite helmet or netherite pickaxe or netherite axe or diamond sword or diamond boots or diamond leggings or diamond chestplate or diamond helmet or diamond pickaxe or diamond axe or iron sword or iron boots or iron leggings or iron chestplate or iron helmet or iron pickaxe or iron axe or golden sword or golden boots or golden leggings or golden chestplate or golden helmet or golden pickaxe or golden axe or stone sword or stone pickaxe or stone axe or wooden sword or wooden pickaxe or wooden axe or leather boots or leather leggings or leather chestplate or leather helmet or armor or sword or axe or pickaxe:
+					set slot 4 of current inventory of player to clicked item
+					set {slot.%player%} to clicked slot's index
+			else if clicked raw slot is 4:
+				if clicked item is bow or netherite sword or netherite boots or netherite leggings or netherite chestplate or netherite helmet or netherite pickaxe or netherite axe or diamond sword or diamond boots or diamond leggings or diamond chestplate or diamond helmet or diamond pickaxe or diamond axe or iron sword or iron boots or iron leggings or iron chestplate or iron helmet or iron pickaxe or iron axe or golden sword or golden boots or golden leggings or golden chestplate or golden helmet or golden pickaxe or golden axe or stone sword or stone pickaxe or stone axe or wooden sword or wooden pickaxe or wooden axe or leather boots or leather leggings or leather chestplate or leather helmet or armor or sword or axe or pickaxe:
+on inventory close:
+	if name of current inventory of player is "&9주문의 흔적":
+		if {주문의흔적사용.%player%} is false:
+			give 1 paper named "&9주문의 흔적" with lore "F키를 누르면 사용" to player
+		else:
+			set {주문의흔적사용.%player%} to false
+
+#메소
+every 1 seconds:
+	loop all players:
+		if {메소보기.%loop-player%} is true:
+			wipe loop-player's sidebar
+			set name of sidebar of loop-player to "&e메소"
+			set score "메소 : %{메소.%loop-player%}%" in sidebar of loop-player to 1
+
+command /초기화:
+	trigger:
+		if player is op:
+			set {메소.%player%} to 0
+			set {스타캐치.%player%} to true
+			set {ARC.%player%} to 0
+			set {Stat.%player%} to 0
+			send action bar "모든것을 초기화 했습니다" to player
+
+command /메소창 [<string>]:
+	trigger:
+		if arg 1 is "열기":
+			set {메소보기.%player%} to true
+			message "메소창을 활성화 했습니다"
+
+		if arg 1 is "닫기":
+			set {메소보기.%player%} to false
+			message "메소창을 비활성화 했습니다"
+
+on death:
+	if victim's type is not player:
+		set {_드롭확률}to random integer between 1 and 1000000000000
+		if {_드롭확률} is between 1 and 500000000000:
+			drop 1 paper named "&e메소" with lore "F키를 누르면 사용" at victim
+		if {_드롭확률} is between 35 and 850000000000:
+			if victim is Piglin:
+				drop 1 Crossbow named "&e피글린의 쇠뇌" at victim
+			else if victim is Piglin Brute:
+				drop 1 Golden Axe named "&e피글린 야수의 금 도끼" at victim
+			else if victim is Hoglin:
+				drop 1 Leather named "&e호글린의 가죽" at victim
+			else if victim is Allay:
+				drop 1 Echo Shard named "&e알레이의 자수정 조각" at victim
+			else if victim is Vindicator:
+				drop 1 Iron Axe named "&e변명자의 철 도끼" at victim
+			else if victim is Evoker:
+				drop 1 Totem of Undying named "&e소환사의 불사의 토템" at victim
+			else if victim is Ravager:
+				drop 1 Saddle named "&e파괴수의 안장" at victim
+		else if {_드롭확률} is between 980000000000 and 1000000000000:
+			if victim is Piglin:
+				drop 1 Crossbow named "&e피글린의 &0영혼 파편" with lore "&0피글린에게서 떨어져나온 영혼 파편이다" at victim
+			else if victim is Piglin Brute:
+				drop 1 Golden Axe named "&0피글린 야수의 영혼 파편" with lore "&0피글린 야수에게서 떨어져나온 영혼 파편이다" at victim
+			else if victim is Hoglin:
+				drop 1 Leather named "&6호글린의 &0영혼 파편" with lore "&0호글린에게서 떨어져나온 영혼 파편이다" at victim
+			else if victim is Allay:
+				drop 1 Echo Shard named "&b알레이의 &0영혼 파편" with lore "&0알레이에게서 떨어져나온 영혼 파편이다" at victim
+			else if victim is Vindicator:
+				drop 1 Iron Axe named "&7변명자의 &0영혼 파편" with lore "&0변명자에게서 떨어져나온 영혼 파편이다" at victim
+			else if victim is Evoker:
+				drop 1 Totem of Undying named "&3소환사의 &0영혼 파편" with lore "&0소환사에게서 떨어져나온 영혼 파편이다" at victim
+			else if victim is Ravager:
+				drop 1 Saddle named "&8파괴수의 &0영혼 파편" with lore "&0파괴수에게서 떨어져나온 영혼 파편이다" at victim
+		if {_드롭확률} is 12345:
+			drop 50 diamond_block at victim
+		if victim is ender_dragon:
+			drop 1 Echo Shard named "&0위대한 엔더드래곤의 소울조각" at victim
+on swap hand items:
+	if name of player's tool is "&e메소":
+		cancel event
+		remove 1 of player's tool from player's tool
+		set {_추가메소} to random integer between 1 and 1000
+		add {_추가메소} to {메소.%player%}
+#아케인포스
+command /아케인포스:
+	trigger:
+		open chest with 1 rows named "&1아케인포스" to player
+		set slot 0 of current inventory of player to blue stained glass pane named "&9아케인 포스"
+		set slot 1 of current inventory of player to blue stained glass pane named "&9아케인 포스"
+		set slot 3 of current inventory of player to blue stained glass pane named "&9아케인 포스"
+		set slot 5 of current inventory of player to blue stained glass pane named "&9아케인 포스"
+		set slot 7 of current inventory of player to blue stained glass pane named "&9아케인 포스"
+		set slot 8 of current inventory of player to blue stained glass pane named "&9아케인 포스"
+command /아케인포스초기화:
+	trigger:
+		set {ARC.%player%} to 0
+
+on inventory click:
+	if name of current inventory of player is "&1아케인포스":
+		cancel event
+		if click type is left mouse button:
+			if clicked raw slot is between 9 and 44:
+				if clicked item is Heart of the Sea:
+					if name of player's tool is"&1아케인심볼:보루 잔해": 
+						set slot  of current inventory of player to clicked item
+						remove 1 Heart of the Sea named "&1아케인심볼:보루 잔해" from player's inventory
+					else if name of player's tool is"&1아케인심볼:네더 요새": 
+						set slot  of current inventory of player to clicked item
+						remove 1 Heart of the Sea named "&1아케인심볼:네더 요새" from player's inventory
+					else if name of player's tool is"&1아케인심볼:삼림 대저택": 
+						set slot  of current inventory of player to clicked item
+						remove 1 Heart of the Sea named "&1아케인심볼:삼림 대저택" from player's inventory
+					else if name of player's tool is "&1아케인심볼:바다신전":
+					else if name of player's tool is "&1아케인심볼:아케인리버의 시작"
+					else if name of player's tool is "&1아케인심볼:
+on inventory click:
+	if name of current inventory of player is "&1어센틱포스":
+		cancel event
+		if click type is left mouse button:
+			if clicked raw slot is between 9 and 44:
+				if clicked item is Heart of the Sea:
+					if name of player's tool is"&1어센틱심볼:어둠의 시작:나이란": 
+						set slot  of current inventory of player to clicked item
+						remove 1 Heart of the Sea named "&1어센틱심볼:어둠의 시작:나이란" from player's inventory
+					else if name of player's tool is"&1어센틱심볼:깨어난 동상:반힐탄": 
+						set slot  of current inventory of player to clicked item
+						remove 1 Heart of the Sea named "&1어센틱심볼:깨어난 동상:반힐탄" from player's inventory
+					else if name of player's tool is"&1어센틱심볼:고대의 실험실:다이문":
+						set slot  of current inventory of player to clicked item
+						remove 1 Heart of the Sea named "&1어센틱심볼:고대의 실험실:다이문" from player's inventory
+					else if name of player's tool is"&1어센틱심볼:
+on right click:
+	if player's tool is diamond_block:
+		set{_다야개수} to random integer between 1 and 30
+		give {_다야개수} of diamond
