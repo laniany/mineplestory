@@ -1,0 +1,145 @@
+#강화
+#주문의 흔적
+command /주문의흔적:
+	trigger:
+		give 1 paper named "&9주문의 흔적" with lore "F키를 누르면 사용" to player
+
+on swap hand items:
+	if name of player's tool is "&9주문의 흔적":
+		cancel event
+		remove 1 of player's tool from player's tool
+		
+		open chest with 1 rows named "&9주문의 흔적" to player
+
+		loop 4 times:
+			set {_slot} to loop-num - 1
+			set slot {_slot} of current inventory of player to paper named "&9주문의 흔적"
+		loop 4 times:
+			set {_slot} to loop-num + 4
+			set slot {_slot} of current inventory of player to paper named "&9주문의 흔적"
+
+		on inventory click:
+			if icname contains "&9주문의 흔적":
+				if clicked raw slot is not 4:
+					cancel event
+#메소
+every 1 seconds:
+	loop all players:
+		if {메소보기.%loop-player%} is true:
+			wipe loop-player's sidebar
+			set name of sidebar of loop-player to "&e메소"
+			set score "메소 : %{메소.%loop-player%}%" in sidebar of loop-player to 1
+
+command /메소초기화:
+	trigger:
+		if player is op:
+			set {메소.%player%} to 0
+			send action bar "메소를 초기화 했습니다" to player
+
+command /메소창 [<string>]:
+	trigger:
+		if arg 1 is "열기":
+			set {메소보기.%player%} to true
+			message "메소창을 활성화 했습니다"
+
+		if arg 1 is "닫기":
+			set {메소보기.%player%} to false
+			message "메소창을 비활성화 했습니다"
+
+on death:
+	drop 1 paper named "&e메소" at victim
+on death:
+	if victim's type is not player:
+		set {_드롭확률}to random integer between 1 and 1000000000000
+		if {_드롭확률} is between 1 and 500000000000:
+			drop 1 paper named "&e메소" with lore "F키를 누르면 사용" at victim
+		if {_드롭확률} is between 35 and 850000000000:
+			if victim is Piglin:
+				drop 1 Crossbow named "&e피글린의 쇠뇌" at victim
+			else if victim is Piglin Brute:
+				drop 1 Golden Axe named "&e피글린 야수의 금 도끼" at victim
+			else if victim is Hoglin:
+				drop 1 Leather named "&e호글린의 가죽" at victim
+			else if victim is Allay:
+				drop 1 Echo Shard named "&e알레이의 자수정 조각" at victim
+			else if victim is Vindicator:
+				drop 1 Iron Axe named "&e변명자의 철 도끼" at victim
+			else if victim is Evoker:
+				drop 1 Totem of Undying named "&e소환사의 불사의 토템" at victim
+			else if victim is Ravager:
+				drop 1 Saddle named "&e파괴수의 안장" at victim
+		else if {_드롭확률} is between 980000000000 and 1000000000000:
+			if victim is Piglin:
+				drop 1 Crossbow named "&e피글린의 &0소울조각" with lore "&0피글린에게서 떨어져나온 소울조각이다" at victim
+			else if victim is Piglin Brute:
+				drop 1 Golden Axe named "&0피글린 야수의 소울조각" with lore "&0피글린 야수에게서 떨어져나온 소울조각이다" at victim
+			else if victim is Hoglin:
+				drop 1 Leather named "&6호글린의 &0소울조각" with lore "&0호글린에게서 떨어져나온 소울조각이다" at victim
+			else if victim is Allay:
+				drop 1 Echo Shard named "&b알레이의 &0소울조각" with lore "&0알레이에게서 떨어져나온 소울조각이다" at victim
+			else if victim is Vindicator:
+				drop 1 Iron Axe named "&7변명자의 &0소울조각" with lore "&0변명자에게서 떨어져나온 소울조각이다" at victim
+			else if victim is Evoker:
+				drop 1 Totem of Undying named "&3소환사의 &0소울조각" with lore "&0소환사에게서 떨어져나온 소울조각이다" at victim
+			else if victim is Ravager:
+				drop 1 Saddle named "&8파괴수의 &0소울조각" with lore "&0파괴수에게서 떨어져나온 소울조각이다" at victim
+		if {_드롭확률} is 12345:
+			drop 50 diamond_block at victim
+		if victim is ender_dragon:
+			drop 1 Echo Shard named "&0엔더드래곤의 소울조각" at victim
+
+on load:
+	register new shapeless recipe for 1 Heart of the Sea named "&0엔더드래곤의 소울" using Echo Shard named "&0엔더드래곤의 소울조각", Echo Shard named "&0엔더드래곤의 소울조각", Echo Shard named "&0엔더드래곤의 소울조각", Echo Shard named "&0엔더드래곤의 소울조각", Echo Shard named "&0엔더드래곤의 소울조각", Echo Shard named "&0엔더드래곤의 소울조각", Echo Shard named "&0엔더드래곤의 소울조각", Echo Shard named "&0엔더드래곤의 소울조각", Echo Shard named "&0엔더드래곤의 소울조각"
+
+on swap hand items:
+	if name of player's tool is "&0엔더드래곤의 소울":
+		cancel event
+		remove 1 of player's tool from player's tool
+		set {_소울확률} to random integer between 0 and 100
+		if {_소울확률} is between 99 and 100:
+			give a Heart of the Sea named "&0위대한 엔더드래곤의 소울" to the player
+		if {소울확률} is between 0 and 10:
+			give a Heart of the Sea named "&0기운찬 엔더드래곤의 소울" to the player
+		if {_소울확률} is between 11 and 21:
+			give a Heart of the Sea named "&0날렵한 엔더드래곤의 소울" to the player
+		if {_소울확률} is between 22 and 32:
+			give a Heart of the Sea named "&0총명한 엔더드래곤의 소울" to the player
+		if {_소울확률} is between 33 and 43:
+			give a Heart of the Sea named "&0놀라운 엔더드래곤의 소울" to the player
+		if {_소울확률} is between 44 and 54:
+			give a Heart of the Sea named "&0화려한 엔더드래곤의 소울" to the player
+		if {_소울확률} is between 55 and 65:
+			give a Heart of the Sea named "&0강력한 엔더드래곤의 소울" to the player
+		if {_소울확률} is between 66 and 76:
+			give a Heart of the Sea named "&0빛나는 엔더드래곤의 소울" to the player
+		if {_소울확률} is between 77 and 77:
+			give a Heart of the Sea named "&0풍부한 엔더드래곤의 소울" to the player
+		if {_소울확률} is between 88 and 98:
+			give a Heart of the Sea named "&0강인한 엔더드래곤의 소울" to the player
+
+on swap hand items:
+	if name of player's tool is "&e메소":
+		cancel event
+		remove 1 of player's tool from player's tool
+		set {_추가메소} to random integer between 1 and 1000
+		add {_추가메소} to {메소.%player%}
+
+#아케인포스
+command /아케인포스:
+	trigger:
+		open chest with 1 raws named "&1아케인포스"
+		loop 3 times:
+			set {_slot} to loop-num -1
+			set {_slot} of current inventory of player to Blue Stained Glass Pane
+
+		loop 3 times:
+			set {_slot} to loop-num +5
+			set {_slot} of current inventory of player to Blue Stained Glass Pane
+
+set {%player%.ARC} to 0
+on death of a Wither:
+	drop 1 Heart of the Sea named "아케인심볼:위더" at victim
+on death of a Ender Dragon:
+	drop 1 Heart of the Sea named "아케인심볼:엔더드래곤" at victim
+on death of a Warden:
+	drop 1 Heart of the Sea named "아케인심볼:워든" at victim
